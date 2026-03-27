@@ -1,43 +1,34 @@
 ```markdown
-### `create_payment_link`
+### verify_webhook_signature
 
 ```python
-def create_payment_link(
-    amount: float,
-    currency: str = "USD",
-    expires_in_hours: int = 24,
-    metadata: dict | None = None,
-) -> dict:
+def verify_webhook_signature(payload: bytes, signature: str, secret: str) -> bool
 ```
 
-Generate a shareable payment link for a given amount.
+Verify an incoming payment webhook signature.
 
-The link expires after `expires_in_hours` (default 24h).
-Optional `metadata` is attached to the resulting transaction.
+Compares the provided HMAC-SHA256 signature against a locally
+computed digest using the shared secret. Returns True if valid.
 
 **Parameters:**
 
--   `amount` (float): The payment amount.
--   `currency` (str, optional): The currency for the payment (default: "USD").
--   `expires_in_hours` (int, optional): The link's expiration time in hours (default: 24).
--   `metadata` (dict | None, optional): Optional metadata to attach to the transaction (default: None).
+*   `payload` (bytes): The raw webhook request body as bytes.
+*   `signature` (str): The signature provided in the `X-Signature` header.
+*   `secret` (str): Your shared secret key.
 
 **Returns:**
 
--   `dict`: A dictionary containing the payment link and details.
+*   `bool`: True if the signature is valid, False otherwise.
 
 **Example:**
 
 ```python
-result = create_payment_link(amount=100.00, currency="EUR", expires_in_hours=48, metadata={"order_id": "123"})
-print(result)
-# Expected output:
-# {
-#     "payment_link": "https://pay.example.com/link_new",
-#     "amount": 100.00,
-#     "currency": "EUR",
-#     "expires_in_hours": 48,
-#     "status": "active",
-# }
-```
+payload = b'{"event": "payment.received", "data": {...}}'
+signature = "sha256=..."
+secret = "your_secret"
+
+if verify_webhook_signature(payload, signature, secret):
+    print("Valid signature!")
+else:
+    print("Invalid signature!")
 ```
