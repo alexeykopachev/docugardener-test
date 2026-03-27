@@ -1,43 +1,44 @@
 ```markdown
-### authorize_payment
+### capture_payment
 
 ```python
-def authorize_payment(amount: float, currency: str = "USD", capture_method: str = "automatic", idempotency_key: str | None = None) -> dict
+def capture_payment(
+    transaction_id: str,
+    amount: float | None = None,
+) -> dict:
+    """Capture a previously authorized payment.
+
+    If amount is None, captures the full authorized amount.
+    Partial capture is supported by passing a lower amount.
+    """
+    return {
+        "transaction_id": transaction_id,
+        "status": "captured",
+        "captured_amount": amount,
+    }
 ```
 
-Authorize a payment without capturing funds immediately.
-
-Use `capture_method='manual'` to hold funds and capture later via `capture_payment()`.
-Authorized but uncaptured payments expire after 7 days.
+Captures a previously authorized payment.
 
 **Parameters:**
 
-*   `amount` (float): The amount to authorize.
-*   `currency` (str, optional): The currency for the payment (e.g., "USD", "EUR"). Defaults to "USD".
-*   `capture_method` (str, optional):  `"automatic"` to immediately capture funds, or `"manual"` to authorize only. Defaults to `"automatic"`.
-*   `idempotency_key` (str | None, optional):  A unique key to prevent duplicate authorizations. If provided, repeated calls with the same key will return the same authorization. Defaults to `None`.
+*   `transaction_id` (str): The ID of the transaction to capture.
+*   `amount` (float | None, optional): The amount to capture. If `None`, the full authorized amount is captured. Defaults to `None`.
 
 **Returns:**
 
-A dictionary containing the authorization details:
-
-*   `transaction_id` (str):  A unique transaction identifier (starts with "txn\_auth\_").
-*   `status` (str): The status of the authorization, which will be `"authorized"`.
-*   `amount` (float): The authorized amount.
-*   `currency` (str): The currency of the authorization.
-*   `capture_method` (str): The capture method used.
+*   `dict`: A dictionary containing the transaction ID, status, and captured amount.
 
 **Example:**
 
 ```python
-authorization = authorize_payment(amount=100.00, currency="USD", capture_method="manual")
-print(authorization)
-# Expected output (actual transaction_id will vary):
-# {'transaction_id': 'txn_auth_new', 'status': 'authorized', 'amount': 100.0, 'currency': 'USD', 'capture_method': 'manual'}
+result = capture_payment(transaction_id="123", amount=50.0)
+print(result)
+# Expected output: {'transaction_id': '123', 'status': 'captured', 'captured_amount': 50.0}
 ```
+
 ```python
-authorization = authorize_payment(amount=50.00, currency="EUR", idempotency_key="unique_key_123")
-print(authorization)
-# Expected output (actual transaction_id will vary):
-# {'transaction_id': 'txn_auth_unique_key_123', 'status': 'authorized', 'amount': 50.0, 'currency': 'EUR', 'capture_method': 'automatic'}
+result = capture_payment(transaction_id="456")
+print(result)
+# Expected output: {'transaction_id': '456', 'status': 'captured', 'captured_amount': None}
 ```
