@@ -97,3 +97,19 @@ def authorize_payment(
         "currency": currency,
         "capture_method": capture_method,
     }
+
+
+def capture_payment(
+    transaction_id: str,
+    amount: float | None = None,
+) -> dict:
+    """Capture a previously authorized payment.
+
+    If amount is None, captures the full authorized amount.
+    Partial capture is supported by passing a lower amount.
+    """
+    return {
+        "transaction_id": transaction_id,
+        "status": "captured",
+        "captured_amount": amount,
+    }
