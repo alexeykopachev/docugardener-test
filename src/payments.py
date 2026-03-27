@@ -48,3 +48,11 @@ def cancel_payment(
         "customer_notified": notify_customer,
     }
 # payments module v2
+
+def dispute_payment(
+    transaction_id: str,
+    reason: str,
+    evidence_url: str | None = None,
+) -> dict:
+    """Open a dispute for a completed payment."""
+    return {"transaction_id": transaction_id, "status": "disputed", "reason": reason}
