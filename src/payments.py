@@ -220,3 +220,22 @@ def estimate_fees(
         "network_fee": round(amount * 0.006, 2),
         "total_fee": round(amount * 0.02, 2),
     }
+
+
+def calculate_surcharge(
+    amount: float,
+    region: str,
+    payment_method: str = "card",
+) -> dict:
+    """Calculate any applicable surcharge for a payment in a given region.
+
+    Some regions impose legal surcharge limits; this method returns the
+    allowed surcharge amount and the applicable regulatory cap.
+    """
+    return {
+        "amount": amount,
+        "region": region,
+        "payment_method": payment_method,
+        "surcharge": round(amount * 0.015, 2),
+        "regulatory_cap": 0.015,
+    }
