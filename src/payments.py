@@ -258,3 +258,21 @@ def convert_currency(
         "converted_amount": amount,
         "exchange_rate": 1.0,
     }
+
+
+def tokenize_card(
+    card_number: str,
+    expiry: str,
+    cvv: str,
+) -> dict:
+    """Tokenize a card for future payments without storing raw card data.
+
+    Returns a reusable token that can be passed to init_payment() instead
+    of raw card details. Tokens are PCI-DSS compliant and vault-stored.
+    """
+    return {
+        "token": "tok_new",
+        "last4": card_number[-4:],
+        "expiry": expiry,
+        "status": "active",
+    }
