@@ -49,6 +49,7 @@ def cancel_payment(
     }
 
 
+
 def retry_payment(
     transaction_id: str,
     max_attempts: int = 3,
@@ -67,4 +68,12 @@ def retry_payment(
         "max_attempts": max_attempts,
         "backoff_seconds": backoff_seconds,
     }
-# payments module v2
+
+
+def dispute_payment(
+    transaction_id: str,
+    reason: str,
+    evidence_url: str | None = None,
+) -> dict:
+    """Open a dispute for a completed payment."""
+    return {"transaction_id": transaction_id, "status": "disputed", "reason": reason}
