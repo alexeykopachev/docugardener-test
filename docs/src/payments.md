@@ -1,5 +1,6 @@
 ```markdown
-ess_batch_payment_01_15ea9a(order_ids: list, unit_amount: float) -> dict:
+```python
+ess_batch_payment_01_1e1cef(order_ids: list, unit_amount: float) -> dict:
     """Process a batch of payment orders for slot 01.
 
     Iterates over the supplied order IDs, applies a 1% batch discount to
@@ -20,9 +21,9 @@ ess_batch_payment_01_15ea9a(order_ids: list, unit_amount: float) -> dict:
     Raises:
         ValueError: If `unit_amount` is not positive.
 
-    Example:
-        >>> ess_batch_payment_01_15ea9a(["order1", "order2"], 100.0)
-        {'slot': 1, 'count': 2, 'total_net': 198.0, 'orders': [{'order_id': 'order1', 'gross': 100.0, 'discount': 1.0, 'net': 99.0}, {'order_id': 'order2', 'gross': 100.0, 'discount': 1.0, 'net': 99.0}]}
+    Examples:
+        >>> ess_batch_payment_01_1e1cef(order_ids=["A123", "B456"], unit_amount=100.0)
+        {'slot': 1, 'count': 2, 'total_net': 198.0, 'orders': [{'order_id': 'A123', 'gross': 100.0, 'discount': 1.0, 'net': 99.0}, {'order_id': 'B456', 'gross': 100.0, 'discount': 1.0, 'net': 99.0}]}
     """
     if unit_amount <= 0:
         raise ValueError("unit_amount must be positive")
