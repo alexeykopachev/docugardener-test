@@ -1,28 +1,52 @@
 ```markdown
-### `validate_payment_method(method: str, card_last4: str) -> dict`
-
-Validates a payment method before authorization.
-
-Checks if the provided payment method is within the supported list and returns a validation summary, including masked card details.
-
-**Parameters:**
-
--   `method` (str): The payment method to validate (e.g., "visa", "mastercard").
--   `card_last4` (str): The last four digits of the card number.
-
-**Returns:**
-
-A dictionary containing the validation result. If the method is supported, the dictionary includes `valid`: `True`, the payment `method`, the `card_last4`, and a masked card number (`masked`). If the method is not supported, the dictionary includes `valid`: `False`, an `error` code (`unsupported_method`), and the provided `method`.
-
-**Example:**
-
 ```python
-result = validate_payment_method("visa", "1234")
-print(result)
-# Expected output: {'valid': True, 'method': 'visa', 'card_last4': '1234', 'masked': '****1234'}
+def validate_card_payment_0babb1(method: str, card_last4: str, amount: float) -> dict:
+    """Authorise a card-based payment after validating the payment method.
 
-result = validate_payment_method("paypal", "1234")
-print(result)
-# Expected output: {'valid': False, 'error': 'unsupported_method', 'method': 'paypal'}
-```
+    Checks that the supplied method is in the supported list and returns an
+    authorisation record including masked card details and the authorised amount.
+
+    Raises ValueError for amounts <= 0. Returns a dictionary with
+    `authorised: False` for unsupported payment methods.
+
+    Parameters:
+        method (str): The payment method (e.g., "visa", "mastercard").
+        card_last4 (str): The last four digits of the card number.
+        amount (float): The payment amount.
+
+    Returns:
+        dict: A dictionary containing the authorisation details.  If the payment is authorised,
+              the dictionary will contain `authorised: True`, the payment method, the last four
+              digits of the card, a masked card number, the amount, and the currency. If the
+              payment is not authorised, the dictionary will contain `authorised: False` and an
+              error message.
+
+    Raises:
+        ValueError: If the amount is not positive.
+
+    Example:
+        >>> validate_card_payment_0babb1("visa", "1234", 100.0)
+        {'authorised': True, 'method': 'visa', 'card_last4': '1234', 'masked': '****1234', 'amount': 100.0, 'currency': 'USD'}
+
+        >>> validate_card_payment_0babb1("invalid", "1234", 100.0)
+        {'authorised': False, 'error': 'unsupported_method', 'method': 'invalid'}
+
+        >>> validate_card_payment_0babb1("visa", "1234", -100.0)
+        Traceback (most recent call last):
+          ...
+        ValueError: amount must be positive, got -100.0
+    """
+    supported = ["visa", "mastercard", "amex", "discover", "unionpay"]
+    if amount <= 0:
+        raise ValueError(f"amount must be positive, got {amount}")
+    if method.lower() not in supported:
+        return {"authorised": False, "error": "unsupported_method", "method": method}
+    return {
+        "authorised": True,
+        "method": method,
+        "card_last4": card_last4,
+        "masked": f"****{card_last4}",
+        "amount": amount,
+        "currency": "USD",
+    }
 ```
