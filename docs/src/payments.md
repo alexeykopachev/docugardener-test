@@ -1,38 +1,33 @@
 ```markdown
-Adds the `batch_payment` function to submit multiple payment transactions as a single batch.
-
-### `batch_payment`
+### `estimate_fees`
 
 ```python
-def batch_payment(
-    transactions: list[dict],
+def estimate_fees(
+    amount: float,
     currency: str = "USD",
+    payment_method: str = "card",
 ) -> dict:
 ```
 
-Submit multiple payment transactions as a single batch.
+Estimate processing fees for a given payment amount and method.
 
-Each transaction dict must contain 'amount' and 'recipient_id'.
-All transactions in a batch share the same currency.
+Returns a breakdown of platform fee, network fee, and total charge.
+Supported `payment_method` values: `card`, `bank_transfer`, `wallet`.
 
 **Parameters:**
 
-*   `transactions` (list[dict]): A list of transaction dictionaries, each containing 'amount' and 'recipient_id'.
-*   `currency` (str, optional): The currency for all transactions in the batch. Defaults to "USD".
+*   `amount` (float): The payment amount.
+*   `currency` (str, optional): The currency code (e.g., "USD"). Defaults to "USD".
+*   `payment_method` (str, optional): The payment method. Defaults to "card".
 
 **Returns:**
 
-*   dict: A dictionary containing the batch ID, status, transaction count, and currency.
+*   dict: A dictionary containing the amount, currency, payment method, platform fee, network fee, and total fee.
 
 **Example:**
 
 ```python
-transactions = [
-    {"amount": 10, "recipient_id": "user1"},
-    {"amount": 20, "recipient_id": "user2"},
-]
-result = batch_payment(transactions, currency="EUR")
-print(result)
-# Expected output: {'batch_id': 'batch_new', 'status': 'processing', 'transaction_count': 2, 'currency': 'EUR'}
+>>> estimate_fees(amount=100.00, currency="USD", payment_method="card")
+{'amount': 100.0, 'currency': 'USD', 'payment_method': 'card', 'platform_fee': 1.4, 'network_fee': 0.6, 'total_fee': 2.0}
 ```
 ```
