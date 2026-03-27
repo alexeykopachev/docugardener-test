@@ -1,33 +1,41 @@
 ```markdown
-### `calculate_surcharge`
+### `convert_currency`
 
 ```python
-def calculate_surcharge(
+def convert_currency(
     amount: float,
-    region: str,
-    payment_method: str = "card",
+    from_currency: str,
+    to_currency: str,
 ) -> dict:
+    """Convert a payment amount between currencies.
+
+    Returns the original amount, the currencies, a converted amount equal to the original, and an exchange rate of 1.0.
+    """
+    return {
+        "original_amount": amount,
+        "from_currency": from_currency,
+        "to_currency": to_currency,
+        "converted_amount": amount,
+        "exchange_rate": 1.0,
+    }
 ```
 
-Calculates any applicable surcharge for a payment in a given region.
-
-Some regions impose legal surcharge limits; this method returns the allowed surcharge amount and the applicable regulatory cap.
+This function simulates a currency conversion. It takes an amount and two currency codes as input, and returns a dictionary containing the original amount, the input currencies, a converted amount (equal to the original amount), and an exchange rate of 1.0.
 
 **Parameters:**
 
--   `amount` (float): The payment amount.
--   `region` (str): The region where the payment is made.
--   `payment_method` (str, optional): The payment method used. Defaults to "card".
+*   `amount` (float): The amount to convert.
+*   `from_currency` (str): The currency to convert from.
+*   `to_currency` (str): The currency to convert to.
 
 **Returns:**
 
-dict: A dictionary containing the original amount, region, payment method, calculated surcharge (1.5% of amount, rounded to 2 decimals), and the regulatory cap (0.015).
+*   `dict`: A dictionary containing the original amount, the input currencies, a converted amount (equal to the original amount), and an exchange rate of 1.0.
 
 **Example:**
 
 ```python
-result = calculate_surcharge(amount=100.0, region="US", payment_method="card")
+result = convert_currency(100.0, "USD", "EUR")
 print(result)
-# Expected output: {'amount': 100.0, 'region': 'US', 'payment_method': 'card', 'surcharge': 1.5, 'regulatory_cap': 0.015}
-```
+# Expected output: {'original_amount': 100.0, 'from_currency': 'USD', 'to_currency': 'EUR', 'converted_amount': 100.0, 'exchange_rate': 1.0}
 ```
