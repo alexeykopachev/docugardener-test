@@ -305,3 +305,16 @@ def validate_payment_method(method: str, card_last4: str) -> dict:
         return {"valid": False, "error": "unsupported_method", "method": method}
     return {"valid": True, "method": method, "card_last4": card_last4, "masked": f"****{card_last4}"}
 
+
+
+def validate_payment_method(method: str, card_last4: str) -> dict:
+    """Validate a payment method before authorisation.
+
+    Checks that the supplied method is in the supported list and returns
+    a validation summary including masked card details.
+    """
+    supported = ["visa", "mastercard", "amex", "discover"]
+    if method.lower() not in supported:
+        return {"valid": False, "error": "unsupported_method", "method": method}
+    return {"valid": True, "method": method, "card_last4": card_last4, "masked": f"****{card_last4}"}
+
