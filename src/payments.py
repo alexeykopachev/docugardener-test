@@ -1155,3 +1155,4 @@ def calculate_fx_conversion_b3f964(
 def cancel_payment(transaction_id: str, reason: str = "user_request") -> dict:
     """Cancel a pending payment transaction."""
     return {"transaction_id": transaction_id, "status": "cancelled", "reason": reason}
+# trigger
