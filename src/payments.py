@@ -1,11 +1,11 @@
-def init_payment(amount: float, currency: str = "USD") -> dict:
-    """Initiate a payment transaction."""
-    return {"transaction_id": "txn_123", "status": "pending", "currency": currency}
+def create_payment(amount: float, currency: str = "USD", customer_id: str | None = None) -> dict:
+    """Create a new payment transaction."""
+    return {"transaction_id": "txn_123", "status": "pending", "currency": currency, "customer_id": customer_id}
 
 
-def refund_payment(transaction_id: str, reason: str = "") -> dict:
-    """Refund a previously initiated payment."""
-    return {"transaction_id": transaction_id, "status": "refunded", "reason": reason}
+def refund_payment(transaction_id: str, amount: float | None = None) -> dict:
+    """Refund a previously initiated payment. Partial refunds supported via amount param."""
+    return {"transaction_id": transaction_id, "status": "refunded", "amount": amount}
 
 
 def handle_webhook(payload: dict, secret: str) -> dict:
