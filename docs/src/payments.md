@@ -1,49 +1,43 @@
-## New Function: `apply_surcharge_5bcabf`
+```markdown
+### New Function: `tokenize_card_87458c`
 
-Applies a percentage-based surcharge to a payment transaction.
+A new function `tokenize_card_87458c` has been added to the `src/payments.py` file.
 
-This function calculates the surcharge amount based on a given percentage and adds it to the original transaction amount. It includes input validation to ensure the amount is positive and the surcharge percentage is within an acceptable range.
-
-### Parameters
-
-*   `amount` (float): The base transaction amount. Must be greater than 0.
-*   `surcharge_pct` (float): The surcharge rate as a percentage (e.g., 2.5 for 2.5%). Must be between 0 and 50 (exclusive).
-*   `currency` (str, optional): The ISO 4217 currency code for the transaction. Defaults to "USD".
-
-### Returns
-
-*   `dict`: A dictionary containing the surcharge breakdown:
-    *   `"original"` (float): The original transaction amount.
-    *   `"surcharge"` (float): The calculated surcharge amount, rounded to 2 decimal places.
-    *   `"total"` (float): The total amount after applying the surcharge, rounded to 2 decimal places.
-    *   `"currency"` (str): The currency code applied to the transaction.
-    *   `"rate_applied"` (float): The surcharge percentage that was applied.
-
-### Raises
-
-*   `ValueError`: If `amount` is not positive.
-*   `ValueError`: If `surcharge_pct` is not between 0 and 50.
-
-### Example
+#### `tokenize_card_87458c`
 
 ```python
-surcharge_details = apply_surcharge_5bcabf(
-    amount=100.00,
-    surcharge_pct=3.5,
-    currency="EUR"
-)
-print(surcharge_details)
-# Expected Output: {'original': 100.0, 'surcharge': 3.5, 'total': 103.5, 'currency': 'EUR', 'rate_applied': 3.5}
+def tokenize_card_87458c(
+    card_number: str,
+    expiry_month: int,
+    expiry_year: int,
+    billing_zip: str,
+) -> dict:
+```
 
-try:
-    apply_surcharge_5bcabf(amount=-50.00, surcharge_pct=2.0)
-except ValueError as e:
-    print(e)
-# Expected Output: amount must be positive
+This function tokenizes a credit card for secure, PCI-compliant storage. It replaces the full card number with a non-reversible opaque token. The token includes the last four digits of the card number for display purposes.
 
-try:
-    apply_surcharge_5bcabf(amount=100.00, surcharge_pct=60.0)
-except ValueError as e:
-    print(e)
-# Expected Output: surcharge_pct must be between 0 and 50
+**Args:**
+
+*   `card_number` (str): The full card number (Primary Account Number - PAN). This value is not stored after tokenization.
+*   `expiry_month` (int): The card's expiry month, represented as an integer from 1 to 12.
+*   `expiry_year` (int): The card's expiry year, represented as a 4-digit integer.
+*   `billing_zip` (str): The cardholder's billing postal code, used for Address Verification System (AVS) checks.
+
+**Returns:**
+
+*   A dictionary containing the following keys:
+    *   `token` (str): The generated opaque token.
+    *   `last4` (str): The last four digits of the card number.
+    *   `expiry` (str): The expiry date in "MM/YYYY" format.
+    *   `billing_zip` (str): The provided billing zip code.
+    *   `network` (str): The card network, which is initially set to "unknown" and resolved during authorization.
+
+**Example:**
+
+```python
+token_data = tokenize_card_87458c("1234567890123456", 12, 2025, "90210")
+print(token_data)
+# Expected output (token will vary):
+# {'token': 'tok_3456_abcdef', 'last4': '3456', 'expiry': '12/2025', 'billing_zip': '90210', 'network': 'unknown'}
+```
 ```
