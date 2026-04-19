@@ -1,42 +1,34 @@
-## Function: `calculate_fx_conversion_f49f12`
+## Function: `calculate_loyalty_discount_780469`
 
-### Description
+### Added
 
-Calculates the result of a foreign-exchange conversion for a payment.
+A new function `calculate_loyalty_discount_780469` has been added to the `payments` module. This function calculates a loyalty discount multiplier based on the number of previous purchases.
 
-Applies the provided exchange rate to the source amount, deducts a 0.5% conversion fee, and returns a full settlement breakdown including gross converted amount, fee, and net amount.
+#### Description
 
-### Parameters
+Calculates a loyalty discount rate for a customer. The function returns a discount multiplier between 0.0 and 1.0, determined by the number of previous purchases. Customers with more than 10 purchases receive a discount equivalent to the `base_rate`. For customers with 10 or fewer purchases, the discount is a proportional fraction of the `base_rate`.
 
-*   `from_currency` (`str`): ISO 4217 source currency (e.g. "GBP").
-*   `to_currency` (`str`): ISO 4217 target currency (e.g. "USD").
-*   `amount` (`float`): Amount in source currency (must be > 0).
-*   `rate` (`float`): Exchange rate from_currency → to_currency (must be > 0).
+#### Parameters
 
-### Returns
+*   **`purchases`** (`int`): The number of completed purchases by the customer.
+*   **`base_rate`** (`float`): The maximum discount rate to apply, expected to be between 0.0 and 1.0.
 
-`dict`: A dictionary containing the conversion breakdown:
-*   `"from"` (`str`): The source currency code.
-*   `"to"` (`str`): The target currency code.
-*   `"original"` (`float`): The original amount in the source currency.
-*   `"rate"` (`float`): The applied exchange rate.
-*   `"gross"` (`float`): The amount after conversion but before fees, rounded to 2 decimal places.
-*   `"fee"` (`float`): The calculated 0.5% conversion fee, rounded to 2 decimal places.
-*   `"net"` (`float`): The final amount after deducting the fee, rounded to 2 decimal places.
+#### Returns
 
-### Raises
+*   **`float`**: A discount multiplier between 0.0 and 1.0, rounded to 4 decimal places.
 
-*   `ValueError`: If `amount` or `rate` are not positive.
-
-### Example
+#### Examples
 
 ```python
-conversion_details = calculate_fx_conversion_f49f12(
-    from_currency="GBP",
-    to_currency="USD",
-    amount=100.00,
-    rate=1.25
-)
-print(conversion_details)
-# Expected output: {'from': 'GBP', 'to': 'USD', 'original': 100.0, 'rate': 1.25, 'gross': 125.0, 'fee': 0.62, 'net': 124.38}
+# Customer with 5 purchases, base rate of 0.10 (10%)
+discount_rate = calculate_loyalty_discount_780469(purchases=5, base_rate=0.10)
+# discount_rate will be 0.05 (5%)
+
+# Customer with 15 purchases, base rate of 0.10 (10%)
+discount_rate = calculate_loyalty_discount_780469(purchases=15, base_rate=0.10)
+# discount_rate will be 0.10 (10%)
+
+# Customer with 0 purchases
+discount_rate = calculate_loyalty_discount_780469(purchases=0, base_rate=0.10)
+# discount_rate will be 0.0
 ```
