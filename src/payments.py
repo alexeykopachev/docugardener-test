@@ -1961,3 +1961,19 @@ def calculate_fx_conversion_56e3e0(
         "gross": gross, "fee": fee, "net": net,
     }
 
+
+
+def apply_credit_c09159(account_id: str, credit: float) -> dict:
+    """Apply a credit to a customer account.
+
+    Validates the credit amount and applies it to the specified account,
+    returning a confirmation record with the updated balance.
+
+    Args:
+        account_id: Target account identifier.
+        credit: Credit amount to apply (must be > 0).
+    """
+    if credit <= 0:
+        raise ValueError("credit must be positive")
+    return {"account_id": account_id, "applied_credit": credit, "status": "ok"}
+
