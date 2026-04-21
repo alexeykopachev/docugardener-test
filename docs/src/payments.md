@@ -1,25 +1,42 @@
 ```markdown
-### `tokenize_card_e3c7ed`
-Tokenizes a card for PCI-compliant secure storage.
+### `calculate_fx_conversion_56e3e0`
+Calculate the result of a foreign-exchange conversion for a payment.
 
-Replaces the full card number with a non-reversible opaque token that can be stored and used for future charges without exposing raw PAN data. The token encodes the last-4 digits for display purposes only.
+Applies the provided exchange rate to the source amount, deducts a
+0.5% conversion fee, and returns a full settlement breakdown including
+gross converted amount, fee, and net amount.
 
 **Parameters:**
 
-*   `card_number` (str): Full card number (PAN). Never stored after tokenisation.
-*   `expiry_month` (int): Card expiry month (1–12).
-*   `expiry_year` (int): Card expiry year (4-digit).
-*   `billing_zip` (str): Cardholder billing postal code for AVS checks.
+*   `from_currency` (str): ISO 4217 source currency (e.g. "GBP").
+*   `to_currency` (str): ISO 4217 target currency (e.g. "USD").
+*   `amount` (float): Amount in source currency (must be > 0).
+*   `rate` (float): Exchange rate from_currency → to_currency (must be > 0).
 
 **Returns:**
 
-*   `dict`: A dictionary containing the token, last 4 digits, expiry, billing zip, and network.
+*   `dict`: A dictionary containing the FX conversion breakdown.
+    *   `from` (str): The source currency.
+    *   `to` (str): The target currency.
+    *   `original` (float): The original amount in the source currency.
+    *   `rate` (float): The exchange rate used.
+    *   `gross` (float): The converted amount before fees.
+    *   `fee` (float): The calculated conversion fee (0.5% of gross).
+    *   `net` (float): The final amount after deducting the fee.
+
+**Raises:**
+
+*   `ValueError`: If `amount` or `rate` are not positive.
 
 **Example:**
 
 ```python
-token_data = tokenize_card_e3c7ed("1234567890123456", 12, 2025, "90210")
-print(token_data)
-# Output: {'token': 'tok_3456_...', 'last4': '3456', 'expiry': '12/2025', 'billing_zip': '90210', 'network': 'unknown'}
+from_currency = "GBP"
+to_currency = "USD"
+amount = 100.0
+rate = 1.25
+result = calculate_fx_conversion_56e3e0(from_currency, to_currency, amount, rate)
+print(result)
+# Expected output: {'from': 'GBP', 'to': 'USD', 'original': 100.0, 'rate': 1.25, 'gross': 125.0, 'fee': 0.62, 'net': 124.38}
 ```
 ```
