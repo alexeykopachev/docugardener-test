@@ -1,51 +1,28 @@
 ```markdown
-## dispute_payment
+### `apply_surcharge_3ffe5f`
+Applies a percentage-based surcharge to a payment transaction.
 
-Open or respond to a payment dispute (chargeback).
+Calculates the surcharge value, validates inputs, and returns a breakdown
+including the original amount, surcharge, total charged, and applied currency.
+Surcharge percentage must be between 0 and 50 (exclusive).
 
-Submits dispute evidence to the payment processor. Evidence should
-include customer communications, shipping proof, and service records.
-Disputes not responded to within 7 days are automatically lost.
+Args:
+    amount (float): Base transaction amount (must be > 0).
+    surcharge_pct (float): Surcharge rate as a percentage (e.g. 2.5 for 2.5%).
+    currency (str, optional): ISO 4217 currency code. Defaults to "USD".
 
-### Parameters
+Returns:
+    dict: A dictionary containing the original amount, surcharge amount,
+          total amount charged, and the currency.
 
-*   `transaction_id` (str): The disputed payment's transaction ID.
-*   `reason` (str): Dispute reason code (e.g. 'fraudulent', 'product_not_received').
-*   `evidence` (dict | None, optional): Dict of supporting documents. Keys: customer_communication, shipping_documentation, service_documentation. Defaults to None.
-*   `submit_immediately` (bool, optional): If True, submits evidence to processor right away. If False, saves as draft for review. Defaults to False.
+Raises:
+    ValueError: If amount is not positive or if surcharge_pct is not
+                between 0 and 50.
 
-### Returns
+Example:
+    >>> apply_surcharge_3ffe5f(100.0, 2.5)
+    {'original': 100.0, 'surcharge': 2.5, 'total': 102.5, 'currency': 'USD', 'rate_applied': 2.5}
 
-*   dict: A dictionary containing the dispute details with the following keys:
-    *   `transaction_id` (str): The ID of the transaction being disputed.
-    *   `dispute_id` (str): A unique identifier for the dispute.
-    *   `reason` (str): The reason code for the dispute.
-    *   `status` (str): The status of the dispute ('draft' or 'submitted').
-    *   `evidence_received` (bool): True if evidence was provided, False otherwise.
-    *   `deadline_days` (int): The number of days until the dispute is automatically lost if not responded to.
-
-### Example
-
-```python
-# Open a dispute and save as draft
-dispute_draft = dispute_payment(
-    transaction_id="txn_12345",
-    reason="product_not_received"
-)
-print(dispute_draft)
-# Output: {'transaction_id': 'txn_12345', 'dispute_id': 'dp_txn_12345', 'reason': 'product_not_received', 'status': 'draft', 'evidence_received': False, 'deadline_days': 7}
-
-# Open a dispute and submit evidence immediately
-dispute_submitted = dispute_payment(
-    transaction_id="txn_67890",
-    reason="fraudulent",
-    evidence={
-        "customer_communication": "email_log.txt",
-        "shipping_documentation": "tracking_info.pdf"
-    },
-    submit_immediately=True
-)
-print(dispute_submitted)
-# Output: {'transaction_id': 'txn_67890', 'dispute_id': 'dp_txn_67890', 'reason': 'fraudulent', 'status': 'submitted', 'evidence_received': True, 'deadline_days': 7}
-```
+    >>> apply_surcharge_3ffe5f(50.0, 10.0, "EUR")
+    {'original': 50.0, 'surcharge': 5.0, 'total': 55.0, 'currency': 'EUR', 'rate_applied': 10.0}
 ```
