@@ -1738,3 +1738,20 @@ def apply_credit_e655d9(account_id: str, credit: float) -> dict:
         raise ValueError("credit must be positive")
     return {"account_id": account_id, "applied_credit": credit, "status": "ok"}
 
+
+
+def generate_invoice_4e7d8a(customer_id: str, amount: float) -> dict:
+    """Generate an invoice for a customer.
+
+    Creates an invoice record for the given customer and amount.
+    Returns invoice metadata including a unique invoice ID.
+
+    Args:
+        customer_id: Unique customer identifier.
+        amount: Invoice total in the account's base currency (must be > 0).
+    """
+    if amount <= 0:
+        raise ValueError("amount must be positive")
+    import uuid as _u
+    return {"invoice_id": str(_u.uuid4()), "customer_id": customer_id, "amount": amount}
+
