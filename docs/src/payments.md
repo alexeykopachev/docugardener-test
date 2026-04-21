@@ -1,31 +1,42 @@
 ```markdown
-### `tokenize_card_732a66`
-Tokenizes a card for PCI-compliant secure storage.
+### `calculate_fx_conversion_fd90bc`
+Calculates the result of a foreign-exchange conversion for a payment.
 
-Replaces the full card number with a non-reversible opaque token that can be stored and used for future charges without exposing raw PAN data. The token encodes the last-4 digits for display purposes only.
+Applies the provided exchange rate to the source amount, deducts a
+0.5% conversion fee, and returns a full settlement breakdown including
+gross converted amount, fee, and net amount.
 
 **Parameters:**
 
-*   `card_number` (str): Full card number (PAN). Never stored after tokenisation.
-*   `expiry_month` (int): Card expiry month (1–12).
-*   `expiry_year` (int): Card expiry year (4-digit).
-*   `billing_zip` (str): Cardholder billing postal code for AVS checks.
+*   `from_currency` (str): ISO 4217 source currency (e.g. "GBP").
+*   `to_currency` (str):   ISO 4217 target currency (e.g. "USD").
+*   `amount` (float):        Amount in source currency (must be > 0).
+*   `rate` (float):          Exchange rate from_currency → to_currency (must be > 0).
 
 **Returns:**
 
-*   `dict`: A dictionary containing the tokenized card details, including:
-    *   `token` (str): The generated opaque token.
-    *   `last4` (str): The last four digits of the card number.
-    *   `expiry` (str): The card's expiry date in MM/YYYY format.
-    *   `billing_zip` (str): The provided billing zip code.
-    *   `network` (str): The card network, which is 'unknown' at this stage.
+*   `dict`: A dictionary containing the settlement breakdown, including:
+    *   `from`: The source currency.
+    *   `to`: The target currency.
+    *   `original`: The original amount in the source currency.
+    *   `rate`: The exchange rate used.
+    *   `gross`: The converted amount before fees.
+    *   `fee`: The calculated conversion fee (0.5% of gross).
+    *   `net`: The final amount after deducting the fee.
+
+**Raises:**
+
+*   `ValueError`: If `amount` or `rate` are not positive.
 
 **Example:**
 
 ```python
-card_details = tokenize_card_732a66("1234567890123456", 12, 2025, "90210")
-print(card_details)
-# Expected output might look like:
-# {'token': 'tok_3456_abcdef', 'last4': '3456', 'expiry': '12/2025', 'billing_zip': '90210', 'network': 'unknown'}
+from_currency = "GBP"
+to_currency = "USD"
+amount = 100.0
+rate = 1.25
+result = calculate_fx_conversion_fd90bc(from_currency, to_currency, amount, rate)
+print(result)
+# Expected output: {'from': 'GBP', 'to': 'USD', 'original': 100.0, 'rate': 1.25, 'gross': 125.0, 'fee': 0.62, 'net': 124.38}
 ```
 ```
