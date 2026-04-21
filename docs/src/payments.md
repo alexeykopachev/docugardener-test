@@ -1,47 +1,39 @@
-### `validate_card_payment_3dd8c9` Function
-```python
-validate_card_payment_3dd8c9(method: str, card_last4: str, amount: float) -> dict
-```
+```markdown
+### `apply_surcharge_097e1b`
+Apply a percentage-based surcharge to a payment transaction.
 
-**Description:**
-
-Authorise a card-based payment after validating the payment method.
-
-Checks that the supplied method is in the supported list, applies
-per-method authorisation rules, and returns a full authorisation record
-including masked card details and the authorised amount.
+Calculates the surcharge value, validates inputs, and returns a breakdown
+including the original amount, surcharge, total charged, and applied currency.
+Surcharge percentage must be between 0 and 50 (exclusive).
 
 **Parameters:**
 
-*   `method` (str): The payment method (e.g., "visa", "mastercard").
-*   `card_last4` (str): The last four digits of the card number.
-*   `amount` (float): The payment amount.
+*   `amount` (float): Base transaction amount (must be > 0).
+*   `surcharge_pct` (float): Surcharge rate as a percentage (e.g. 2.5 for 2.5%).
+*   `currency` (str, optional): ISO 4217 currency code. Defaults to "USD".
 
 **Returns:**
 
-A dictionary containing the authorisation status, method, masked card details, and authorised amount. If the method is unsupported, it returns `{"authorised": False, "error": "unsupported_method", "method": method}`.
+*   `dict`: A dictionary containing the original amount, surcharge amount, total amount charged, and the currency.
 
 **Raises:**
 
-*   `ValueError`: if the `amount` is less than or equal to 0.
+*   `ValueError`: If `amount` is not positive.
+*   `ValueError`: If `surcharge_pct` is not between 0 and 50.
 
 **Example:**
 
 ```python
-# Successful authorisation
-auth_success = validate_card_payment_3dd8c9(method="visa", card_last4="1234", amount=100.00)
-print(auth_success)
-# Output: {'authorised': True, 'method': 'visa', 'card_last4': '1234', 'masked': '****1234', 'amount': 100.0, 'currency': 'USD'}
+original_amount = 100.0
+surcharge_rate = 5.0
+result = apply_surcharge_097e1b(original_amount, surcharge_rate, "EUR")
+print(result)
+# Expected output: {'original': 100.0, 'surcharge': 5.0, 'total': 105.0, 'currency': 'EUR', 'rate_applied': 5.0}
 
-# Unsupported method
-auth_fail = validate_card_payment_3dd8c9(method="bitcoin", card_last4="5678", amount=50.00)
-print(auth_fail)
-# Output: {'authorised': False, 'error': 'unsupported_method', 'method': 'bitcoin'}
-
-# Invalid amount
 try:
-    validate_card_payment_3dd8c9(method="mastercard", card_last4="9012", amount=0)
+    apply_surcharge_097e1b(100.0, 60.0)
 except ValueError as e:
     print(e)
-# Output: amount must be positive, got 0
+# Expected output: surcharge_pct must be between 0 and 50
+```
 ```
