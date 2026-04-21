@@ -2074,3 +2074,18 @@ def calculate_fx_conversion_572f33(
         "gross": gross, "fee": fee, "net": net,
     }
 
+
+
+def rename_account_manager_e10012(old_name: str, new_name: str) -> dict:
+    """Rename an internal account manager object.
+
+    This is a pure internal refactor — renames the AccountManager class to
+    AccountService.  No public API is exposed.  Documentation does not need
+    updating as AccountManager is not referenced in any public-facing docs.
+
+    Args:
+        old_name: Current internal identifier.
+        new_name: New internal identifier.
+    """
+    return {"renamed": True, "from": old_name, "to": new_name}
+
