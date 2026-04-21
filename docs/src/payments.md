@@ -1,28 +1,31 @@
 ```markdown
-### `apply_surcharge_3ffe5f`
-Applies a percentage-based surcharge to a payment transaction.
+### `tokenize_card_732a66`
+Tokenizes a card for PCI-compliant secure storage.
 
-Calculates the surcharge value, validates inputs, and returns a breakdown
-including the original amount, surcharge, total charged, and applied currency.
-Surcharge percentage must be between 0 and 50 (exclusive).
+Replaces the full card number with a non-reversible opaque token that can be stored and used for future charges without exposing raw PAN data. The token encodes the last-4 digits for display purposes only.
 
-Args:
-    amount (float): Base transaction amount (must be > 0).
-    surcharge_pct (float): Surcharge rate as a percentage (e.g. 2.5 for 2.5%).
-    currency (str, optional): ISO 4217 currency code. Defaults to "USD".
+**Parameters:**
 
-Returns:
-    dict: A dictionary containing the original amount, surcharge amount,
-          total amount charged, and the currency.
+*   `card_number` (str): Full card number (PAN). Never stored after tokenisation.
+*   `expiry_month` (int): Card expiry month (1–12).
+*   `expiry_year` (int): Card expiry year (4-digit).
+*   `billing_zip` (str): Cardholder billing postal code for AVS checks.
 
-Raises:
-    ValueError: If amount is not positive or if surcharge_pct is not
-                between 0 and 50.
+**Returns:**
 
-Example:
-    >>> apply_surcharge_3ffe5f(100.0, 2.5)
-    {'original': 100.0, 'surcharge': 2.5, 'total': 102.5, 'currency': 'USD', 'rate_applied': 2.5}
+*   `dict`: A dictionary containing the tokenized card details, including:
+    *   `token` (str): The generated opaque token.
+    *   `last4` (str): The last four digits of the card number.
+    *   `expiry` (str): The card's expiry date in MM/YYYY format.
+    *   `billing_zip` (str): The provided billing zip code.
+    *   `network` (str): The card network, which is 'unknown' at this stage.
 
-    >>> apply_surcharge_3ffe5f(50.0, 10.0, "EUR")
-    {'original': 50.0, 'surcharge': 5.0, 'total': 55.0, 'currency': 'EUR', 'rate_applied': 10.0}
+**Example:**
+
+```python
+card_details = tokenize_card_732a66("1234567890123456", 12, 2025, "90210")
+print(card_details)
+# Expected output might look like:
+# {'token': 'tok_3456_abcdef', 'last4': '3456', 'expiry': '12/2025', 'billing_zip': '90210', 'network': 'unknown'}
+```
 ```
